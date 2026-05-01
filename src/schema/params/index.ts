@@ -3,8 +3,12 @@ import { IDENTITY_PARAMS } from './identity';
 import { WORKSPACE_PARAMS } from './workspace';
 import { GIT_PARAMS } from './git';
 import { CONTEXT_PARAMS } from './context';
+import { COST_PARAMS } from './cost';
 
-export const PARAMS: ParamDef[] = [...IDENTITY_PARAMS, ...WORKSPACE_PARAMS, ...GIT_PARAMS, ...CONTEXT_PARAMS];
+export const PARAMS: ParamDef[] = [
+  ...IDENTITY_PARAMS, ...WORKSPACE_PARAMS, ...GIT_PARAMS,
+  ...CONTEXT_PARAMS, ...COST_PARAMS,
+];
 
 export const PARAMS_BY_ID = Object.fromEntries(
   PARAMS.map((p) => [p.id, p]),
