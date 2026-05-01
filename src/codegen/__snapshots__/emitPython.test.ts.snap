@@ -1,0 +1,93 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`emitPython > basic selection snapshot 1`] = `
+"#!/usr/bin/env python3
+import json, sys
+def main():
+    try:
+        d = json.load(sys.stdin)
+import re as _re
+def __strip_ansi(s):
+    s=_re.sub(r'\\x1b\\[[0-9;]*m','',str(s))
+    return _re.sub(r'\\x1b\\]8;;[^\\x07]*\\x07','',s)
+def __pack(parts,sep=' | ',max_len=100,hard=False,tol=10):
+    ps=[str(p) for p in parts if p is not None and p!='']
+    if not ps: return ''
+    lim=max_len if hard else max_len*(1+tol/100)
+    lines=[[]]; run=0
+    for p in ps:
+        l=len(__strip_ansi(p)); add=l+(len(sep) if lines[-1] else 0)
+        if lines[-1] and run+add>lim: lines.append([p]); run=l
+        else: lines[-1].append(p); run+=add
+    return '\\n'.join(sep.join(line) for line in lines)
+def __truncate_path(p,max_len=40,base=False):
+    if not p: return ''
+    s=p.split('/')[-1] if base else p
+    return s if len(s)<=max_len else '\\u2026'+s[-(max_len-1):]
+G='\\x1b[32m'; Y='\\x1b[33m'; R='\\x1b[31m'; C='\\x1b[36m'; X='\\x1b[0m'
+def __bar(pct,w=10,wa=75,ra=90):
+    f=round((pct/100)*w); b='\\u2593'*max(0,f)+'\\u2591'*max(0,w-f)
+    c=R if pct>=ra else Y if pct>=wa else G
+    return c+b+X
+    print(__pack([(d.get('model') or {}).get('display_name','?'), __truncate_path((d.get('workspace') or {}).get('current_dir','') or d.get('cwd',''),40,True), __bar((d.get('context_window') or {}).get('used_percentage',0),10,75,90)], " | ", 100, False, 10))
+    except Exception:
+        print('[?]')
+
+if __name__ == '__main__':
+    main()
+"
+`;
+
+exports[`emitPython > git extraction block 1`] = `
+"#!/usr/bin/env python3
+import json, sys
+def main():
+    try:
+        d = json.load(sys.stdin)
+import re as _re
+def __strip_ansi(s):
+    s=_re.sub(r'\\x1b\\[[0-9;]*m','',str(s))
+    return _re.sub(r'\\x1b\\]8;;[^\\x07]*\\x07','',s)
+def __pack(parts,sep=' | ',max_len=100,hard=False,tol=10):
+    ps=[str(p) for p in parts if p is not None and p!='']
+    if not ps: return ''
+    lim=max_len if hard else max_len*(1+tol/100)
+    lines=[[]]; run=0
+    for p in ps:
+        l=len(__strip_ansi(p)); add=l+(len(sep) if lines[-1] else 0)
+        if lines[-1] and run+add>lim: lines.append([p]); run=l
+        else: lines[-1].append(p); run+=add
+    return '\\n'.join(sep.join(line) for line in lines)
+def __run_git():
+    import subprocess
+    def e(cmd):
+        r=subprocess.run(cmd,shell=True,capture_output=True,text=True)
+        return r.stdout.strip()
+    try:
+        branch=e('git rev-parse --abbrev-ref HEAD') or '?'
+        staged=int(e('git diff --cached --numstat 2>/dev/null|wc -l') or '0')
+        modified=int(e('git diff --numstat 2>/dev/null|wc -l') or '0')
+        remote=e('git remote get-url origin 2>/dev/null')
+        return [branch,staged,modified,remote]
+    except Exception: return ['?',0,0,'']
+def __cache_git(sid,ttl,run):
+    import os,json,time as _t
+    f=os.path.join(os.environ.get('TMPDIR','/tmp'),f'statusline-git-cache-{sid}')
+    try:
+        with open(f) as fp: c=json.load(fp)
+        if _t.time()-c['ts']<ttl: return c['d']
+    except Exception: pass
+    d=run()
+    try:
+        with open(f,'w') as fp: json.dump({'ts':_t.time(),'d':d},fp)
+    except Exception: pass
+    return d
+    __GIT = __cache_git(d.get('session_id','default'), 5, __run_git)
+    print(__pack([(d.get('model') or {}).get('display_name','?'), __GIT[0]], " | ", 100, False, 10))
+    except Exception:
+        print('[?]')
+
+if __name__ == '__main__':
+    main()
+"
+`;

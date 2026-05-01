@@ -1,0 +1,77 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`emitJs > emits ctx_bar with bar helper 1`] = `
+"#!/usr/bin/env node
+let input = '';
+process.stdin.on('data', (c) => (input += c));
+process.stdin.on('end', () => {
+  try {
+    const d = JSON.parse(input);
+    const __stripAnsi=(s)=>String(s).replace(/\\x1b\\[[0-9;]*m/g,'').replace(/\\x1b\\]8;;[^\\x07]*\\x07/g,'');
+    const __pack=(parts,sep=' | ',max=100,hard=false,tol=10)=>{const ps=parts.filter(x=>x!=null&&x!=='');if(!ps.length)return'';const lim=hard?max:max*(1+tol/100),lines=[[]];let run=0;for(const p of ps){const l=__stripAnsi(String(p)).length,add=l+(lines[lines.length-1].length?sep.length:0);if(lines[lines.length-1].length&&run+add>lim){lines.push([p]);run=l}else{lines[lines.length-1].push(p);run+=add}}return lines.map(l=>l.join(sep)).join('\\n')};
+    const G='\\x1b[32m',Y='\\x1b[33m',R='\\x1b[31m',C='\\x1b[36m',X='\\x1b[0m';
+    const __bar=(pct,w=10,wa=75,ra=90)=>{const f=Math.round((pct/100)*w),b='\\u2593'.repeat(Math.max(0,f))+'\\u2591'.repeat(Math.max(0,w-f)),c=pct>=ra?R:pct>=wa?Y:G;return c+b+X};
+    console.log(__pack([d.model?.display_name??'?', __bar(d.context_window?.used_percentage??0,10,75,90)], " | ", 100, false, 10));
+  } catch (_e) {
+    console.log('[?]');
+  }
+});
+"
+`;
+
+exports[`emitJs > emits git extraction block with cache when git params selected 1`] = `
+"#!/usr/bin/env node
+let input = '';
+process.stdin.on('data', (c) => (input += c));
+process.stdin.on('end', () => {
+  try {
+    const d = JSON.parse(input);
+    const __stripAnsi=(s)=>String(s).replace(/\\x1b\\[[0-9;]*m/g,'').replace(/\\x1b\\]8;;[^\\x07]*\\x07/g,'');
+    const __pack=(parts,sep=' | ',max=100,hard=false,tol=10)=>{const ps=parts.filter(x=>x!=null&&x!=='');if(!ps.length)return'';const lim=hard?max:max*(1+tol/100),lines=[[]];let run=0;for(const p of ps){const l=__stripAnsi(String(p)).length,add=l+(lines[lines.length-1].length?sep.length:0);if(lines[lines.length-1].length&&run+add>lim){lines.push([p]);run=l}else{lines[lines.length-1].push(p);run+=add}}return lines.map(l=>l.join(sep)).join('\\n')};
+    const __runGit=()=>{try{const ex=(cmd)=>require('child_process').execSync(cmd,{stdio:['ignore','pipe','ignore'],encoding:'utf8'}).trim();const branch=ex('git rev-parse --abbrev-ref HEAD');const staged=parseInt(ex('git diff --cached --numstat 2>/dev/null|wc -l')||'0',10);const modified=parseInt(ex('git diff --numstat 2>/dev/null|wc -l')||'0',10);let remote='';try{remote=ex('git remote get-url origin 2>/dev/null')}catch(_){}return[branch,staged,modified,remote]}catch(_){return['?',0,0,'']}};
+    const __cacheGit=(sid,ttl,run)=>{const os=require('os'),fs=require('fs'),f=os.tmpdir()+'/statusline-git-cache-'+sid;try{const c=JSON.parse(fs.readFileSync(f,'utf8'));if(Date.now()-c.ts<ttl*1e3)return c.d}catch(e){}const d=run();try{fs.writeFileSync(f,JSON.stringify({ts:Date.now(),d}))}catch(e){}return d};
+    const G='\\x1b[32m',Y='\\x1b[33m',R='\\x1b[31m',C='\\x1b[36m',X='\\x1b[0m';
+    const __GIT = __cacheGit(d.session_id ?? 'default', 5, __runGit);
+    console.log(__pack([d.model?.display_name??'?', __GIT[0], (__GIT[2]>0?(__GIT[2]>=1?R:__GIT[2]>=1?Y:G)+'M:'+__GIT[2]+X:'')], " | ", 100, false, 10));
+  } catch (_e) {
+    console.log('[?]');
+  }
+});
+"
+`;
+
+exports[`emitJs > emits resetTime helper for rate_5h_resets 1`] = `
+"#!/usr/bin/env node
+let input = '';
+process.stdin.on('data', (c) => (input += c));
+process.stdin.on('end', () => {
+  try {
+    const d = JSON.parse(input);
+    const __stripAnsi=(s)=>String(s).replace(/\\x1b\\[[0-9;]*m/g,'').replace(/\\x1b\\]8;;[^\\x07]*\\x07/g,'');
+    const __pack=(parts,sep=' | ',max=100,hard=false,tol=10)=>{const ps=parts.filter(x=>x!=null&&x!=='');if(!ps.length)return'';const lim=hard?max:max*(1+tol/100),lines=[[]];let run=0;for(const p of ps){const l=__stripAnsi(String(p)).length,add=l+(lines[lines.length-1].length?sep.length:0);if(lines[lines.length-1].length&&run+add>lim){lines.push([p]);run=l}else{lines[lines.length-1].push(p);run+=add}}return lines.map(l=>l.join(sep)).join('\\n')};
+    const __resetTime=(epoch,fmt='until')=>{if(!epoch)return'?';const dt=new Date(epoch*1e3),now=new Date(),diff=Math.max(0,dt-now),pad=n=>String(n).padStart(2,'0');if(fmt==='until'){const h=Math.floor(diff/36e5),m=Math.floor((diff%36e5)/6e4);return h>0?h+'h '+m+'m':m+'m'}if(fmt==='YYYY-MM-DD')return dt.getFullYear()+'-'+pad(dt.getMonth()+1)+'-'+pad(dt.getDate());if(fmt==='DD/MM/YY')return pad(dt.getDate())+'/'+pad(dt.getMonth()+1)+'/'+String(dt.getFullYear()).slice(2);if(fmt==='HH:mm')return pad(dt.getHours())+':'+pad(dt.getMinutes());return String(epoch)};
+    console.log(__pack([__resetTime(d.rate_limits?.five_hour?.resets_at,"until")], " | ", 100, false, 10));
+  } catch (_e) {
+    console.log('[?]');
+  }
+});
+"
+`;
+
+exports[`emitJs > produces a runnable script for a basic selection 1`] = `
+"#!/usr/bin/env node
+let input = '';
+process.stdin.on('data', (c) => (input += c));
+process.stdin.on('end', () => {
+  try {
+    const d = JSON.parse(input);
+    const __stripAnsi=(s)=>String(s).replace(/\\x1b\\[[0-9;]*m/g,'').replace(/\\x1b\\]8;;[^\\x07]*\\x07/g,'');
+    const __pack=(parts,sep=' | ',max=100,hard=false,tol=10)=>{const ps=parts.filter(x=>x!=null&&x!=='');if(!ps.length)return'';const lim=hard?max:max*(1+tol/100),lines=[[]];let run=0;for(const p of ps){const l=__stripAnsi(String(p)).length,add=l+(lines[lines.length-1].length?sep.length:0);if(lines[lines.length-1].length&&run+add>lim){lines.push([p]);run=l}else{lines[lines.length-1].push(p);run+=add}}return lines.map(l=>l.join(sep)).join('\\n')};
+    const __truncatePath=(p,max=40,base=false)=>{if(!p)return'';const s=base?(String(p).split('/').pop()||p):String(p);return s.length<=max?s:'\\u2026'+s.slice(-(max-1))};
+    console.log(__pack([d.model?.display_name??'?', __truncatePath(d.workspace?.current_dir??d.cwd??'',40,true)], " | ", 100, false, 10));
+  } catch (_e) {
+    console.log('[?]');
+  }
+});
+"
+`;

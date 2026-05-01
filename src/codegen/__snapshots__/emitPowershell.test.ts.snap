@@ -1,0 +1,40 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`emitPowershell > basic selection snapshot 1`] = `
+"$ErrorActionPreference = 'Continue'
+try {
+    $d = $input | Out-String | ConvertFrom-Json
+
+function __Pack($parts,$sep=' | ',$max=100,$hard=$false,$tol=10){
+  $ps=$parts|Where-Object{$_ -ne $null -and $_ -ne ''}
+  if(-not $ps){return ''}
+  $lim=if($hard){$max}else{$max*(1+$tol/100)}
+  $lines=@(@()); $run=0
+  foreach($p in $ps){
+    $l=(Strip-Ansi([string]$p)).Length; $add=$l+$(if($lines[-1].Count -gt 0){$sep.Length}else{0})
+    if($lines[-1].Count -gt 0 -and ($run+$add) -gt $lim){$lines+=,@($p);$run=$l}
+    else{$lines[-1]+=$p;$run+=$add}
+  }
+  ($lines|ForEach-Object{$_-join $sep})-join "\`n"
+}
+function __TruncatePath($p,$max=40,$base=$false){
+  if(-not $p){return ''}
+  $s=if($base){Split-Path $p -Leaf}else{$p}
+  if($s.Length -le $max){$s}else{'…'+$s.Substring($s.Length-($max-1))}
+}
+$ESC=if($PSVersionTable.PSVersion.Major -ge 7){"$([char]27)"}else{[char]27}
+$G="$ESC[32m"; $Y="$ESC[33m"; $R="$ESC[31m"; $C="$ESC[36m"; $X="$ESC[0m"
+function __Bar($pct,$w=10,$wa=75,$ra=90){
+  $f=[Math]::Round(($pct/100)*$w); $e=$w-$f
+  $b=([string][char]0x2593)*[Math]::Max(0,$f)+([string][char]0x2591)*[Math]::Max(0,$e)
+  $c=if($pct -ge $ra){$R}elseif($pct -ge $wa){$Y}else{$G}
+  "$c$b$X"
+}
+$MODEL_DISPLAY=if($d.model.display_name){$d.model.display_name}else{"?"}
+$CWD_RAW=if($d.workspace.current_dir){$d.workspace.current_dir}elseif($d.cwd){$d.cwd}else{""}
+    Write-Host (__Pack @($MODEL_DISPLAY, (__TruncatePath $CWD_RAW 40 $true), (__Bar ([int]($d.context_window.used_percentage ?? 0)) 10 75 90)) " | " 100 $false 10)
+} catch {
+    Write-Host '[?]'
+}
+"
+`;

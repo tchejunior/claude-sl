@@ -1,0 +1,51 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`emitBash > basic selection snapshot 1`] = `
+"#!/bin/bash
+# Requires: jq
+input=$(cat)
+__strip_ansi() { echo "$1" | sed $'s/\\\\e\\\\[[0-9;]*m//g'; }
+__pack() {
+  local sep=$1 max=$2 hard=$3 tol=$4; shift 4
+  local lim result="" run=0
+  if [ "$hard" = "true" ]; then lim=$max
+  else lim=$(awk "BEGIN{printf \\"%d\\",$max*(1+$tol/100)}"); fi
+  for p in "$@"; do
+    [ -z "$p" ] && continue
+    local l; l=$(echo "$p"|__strip_ansi|wc -m)
+    local add=$l
+    [ -n "$result" ] && add=$(( add + \${#sep} ))
+    if [ -n "$result" ] && [ $(( run + add )) -gt $lim ]; then
+      result="$result\\n$p"; run=$l
+    else
+      result="\${result:+$result$sep}$p"; run=$(( run + add ))
+    fi
+  done
+  printf "%b\\n" "$result"
+}
+__truncate_path() {
+  local p=$1 max=\${2:-40} base=\${3:-0}
+  [ -z "$p" ] && echo "" && return
+  [ "$base" = "1" ] || [ "$base" = "true" ] && p=$(basename "$p")
+  if [ \${#p} -le $max ]; then echo "$p"
+  else echo "…\${p: -(max-1)}"; fi
+}
+G=$'\\e[32m'; Y=$'\\e[33m'; R=$'\\e[31m'; C=$'\\e[36m'; X=$'\\e[0m'
+__bar() {
+  local pct=$1 w=\${2:-10} wa=\${3:-75} ra=\${4:-90}
+  local f=$(( (pct * w + 50) / 100 )) e bar="" i
+  e=$(( w - f ))
+  for ((i=0;i<f;i++)); do bar+=$'\\u2593'; done
+  for ((i=0;i<e;i++)); do bar+=$'\\u2591'; done
+  local c
+  if [ "$pct" -ge "$ra" ]; then c=$R
+  elif [ "$pct" -ge "$wa" ]; then c=$Y
+  else c=$G; fi
+  printf "%s%s%s" "$c" "$bar" "$X"
+}
+MODEL_DISPLAY=$(echo "$input"|jq -r '.model.display_name//"?"')
+CWD_RAW=$(echo "$input"|jq -r '.workspace.current_dir//(.cwd//"")')
+CTX_BAR_PCT=$(echo "$input"|jq -r '.context_window.used_percentage//0|floor')
+__pack " | " 100 false 10 "\${MODEL_DISPLAY}" "$(__truncate_path "\${CWD_RAW}" 40 1)" "$(__bar "\${CTX_BAR_PCT}" 10 75 90)"
+"
+`;
