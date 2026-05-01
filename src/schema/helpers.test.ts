@@ -1,6 +1,15 @@
 import { describe, it, expect } from 'vitest';
 import { visibleWidth, EMOJI_WIDTH, stripAnsi } from './helpers';
 
+describe('stripAnsi', () => {
+  it('removes CSI color codes', () => {
+    expect(stripAnsi('\x1b[32mok\x1b[0m')).toBe('ok');
+  });
+  it('removes OSC 8 wrappers', () => {
+    expect(stripAnsi('\x1b]8;;https://x\x07X\x1b]8;;\x07')).toBe('X');
+  });
+});
+
 describe('visibleWidth', () => {
   it('returns char count for plain ASCII', () => {
     expect(visibleWidth('hello')).toBe(5);
