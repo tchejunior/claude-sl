@@ -14,11 +14,11 @@ export default function App() {
         gap: 2,
         alignItems: 'start',
       }}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 0 }}>
           <GlobalControls />
           <ParamList />
         </Box>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 0 }}>
           <SelectedOrder />
           <OutputPanel />
         </Box>

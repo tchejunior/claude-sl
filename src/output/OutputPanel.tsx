@@ -84,7 +84,7 @@ export default function OutputPanel() {
 
   // previewHtml is produced by ansiToHtml which escapes all text via escapeHtml - safe to render
   return (
-    <Card>
+    <Card sx={{ minWidth: 0, overflow: 'hidden' }}>
       <CardContent>
         <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
           <Typography variant="subtitle1">Output</Typography>
@@ -142,7 +142,11 @@ export default function OutputPanel() {
           <SyntaxHighlighter
             language={langTag}
             style={vscDarkPlus}
-            customStyle={{ margin: 0, borderRadius: 8, fontSize: 12, maxHeight: '60vh' }}
+            customStyle={{
+              margin: 0, borderRadius: 8, fontSize: 12, maxHeight: '60vh',
+              overflowX: 'auto',
+              fontFamily: '"Consolas", "Courier New", monospace, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji"',
+            }}
           >
             {current || '# Select parameters on the left…'}
           </SyntaxHighlighter>
