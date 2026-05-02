@@ -46,6 +46,6 @@ __bar() {
 MODEL_DISPLAY=$(echo "$input"|jq -r '.model.display_name//"?"')
 CWD_RAW=$(echo "$input"|jq -r '.workspace.current_dir//(.cwd//"")')
 CTX_BAR_PCT=$(echo "$input"|jq -r '.context_window.used_percentage//0|floor')
-__pack " | " 100 false 10 "\${MODEL_DISPLAY}" "$(__truncate_path "\${CWD_RAW}" 40 1)" "$(__bar "\${CTX_BAR_PCT}" 10 75 90)"
+__pack " | " 100 false 10 "\${MODEL_DISPLAY}" "$(_EV=$(__truncate_path "\${CWD_RAW}" 40 1); printf '%s' "\${_EV:+📁 }\${_EV}")" "$(_EV=$(__bar "\${CTX_BAR_PCT}" 10 75 90); printf '%s' "\${_EV:+🧠 }\${_EV}")"
 "
 `;

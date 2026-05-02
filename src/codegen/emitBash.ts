@@ -4,8 +4,28 @@ import { SH_HELPERS } from './runtimes/sh';
 import { packLines } from './pack';
 import { collectHelpers } from './fragment';
 
+// Category A params (thinking, agent) handle emoji inside renderSh.ts directly.
+const CATEGORY_A: ReadonlySet<ParamId> = new Set(['thinking', 'agent'] as ParamId[]);
+
+function bashWithEmoji(emoji: string, expr: string): string {
+  const inner = expr.startsWith('"') && expr.endsWith('"') ? expr.slice(1, -1) : expr;
+  const simpleVar = inner.match(/^\$\{([^:}=?+#%/]+)\}$/);
+  if (simpleVar) {
+    const v = simpleVar[1];
+    return `"\${${v}:+${emoji} \${${v}}}"`;
+  }
+  const capture = (inner.startsWith('$(') || inner.startsWith('${')) ? `_EV=${inner}` : `_EV=$(${inner})`;
+  return `"$(${capture}; printf '%s' "\${_EV:+${emoji} }\${_EV}")"`;
+}
+
 export function emitBash(selected: ParamId[], opts: ResolvedOptions): string {
-  const fragments = selected.map((id) => PARAMS_BY_ID[id].render.sh(opts));
+  const fragments = selected.map((id) => {
+    const frag = PARAMS_BY_ID[id].render.sh(opts);
+    if (!opts.global.useEmojis || CATEGORY_A.has(id)) return frag;
+    const emoji = PARAMS_BY_ID[id].emoji;
+    if (!emoji) return frag;
+    return { ...frag, expr: bashWithEmoji(emoji, frag.expr) };
+  });
   const widths = selected.map((id) => PARAMS_BY_ID[id].estimateWidth(opts));
   const lineGroups = packLines(widths, opts);
   const rawHelpers = collectHelpers(fragments);

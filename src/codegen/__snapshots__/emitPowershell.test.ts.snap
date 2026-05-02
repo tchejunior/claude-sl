@@ -32,7 +32,7 @@ function __Bar($pct,$w=10,$wa=75,$ra=90){
 }
 $MODEL_DISPLAY=if($d.model.display_name){$d.model.display_name}else{"?"}
 $CWD_RAW=if($d.workspace.current_dir){$d.workspace.current_dir}elseif($d.cwd){$d.cwd}else{""}
-    Write-Host (__Pack @($MODEL_DISPLAY, (__TruncatePath $CWD_RAW 40 $true), (__Bar ([int]($d.context_window.used_percentage ?? 0)) 10 75 90)) " | " 100 $false 10)
+    Write-Host (__Pack @($MODEL_DISPLAY, (& { $v=((__TruncatePath $CWD_RAW 40 $true)); if($v){"📁 $v"}else{""} }), (& { $v=((__Bar ([int]($d.context_window.used_percentage ?? 0)) 10 75 90)); if($v){"🧠 $v"}else{""} })) " | " 100 $false 10)
 } catch {
     Write-Host '[?]'
 }

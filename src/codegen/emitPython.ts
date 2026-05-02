@@ -4,8 +4,21 @@ import { PY_HELPERS } from './runtimes/py';
 import { packLines } from './pack';
 import { collectHelpers } from './fragment';
 
+// Category A params (thinking, agent) handle emoji inside renderPy.ts directly.
+const CATEGORY_A: ReadonlySet<ParamId> = new Set(['thinking', 'agent'] as ParamId[]);
+
+function pyWithEmoji(emoji: string, expr: string): string {
+  return `(f'${emoji} {_v}' if (_v:=str(${expr})) else '')`;
+}
+
 export function emitPython(selected: ParamId[], opts: ResolvedOptions): string {
-  const fragments = selected.map((id) => PARAMS_BY_ID[id].render.py(opts));
+  const fragments = selected.map((id) => {
+    const frag = PARAMS_BY_ID[id].render.py(opts);
+    if (!opts.global.useEmojis || CATEGORY_A.has(id)) return frag;
+    const emoji = PARAMS_BY_ID[id].emoji;
+    if (!emoji) return frag;
+    return { ...frag, expr: pyWithEmoji(emoji, frag.expr) };
+  });
   const widths = selected.map((id) => PARAMS_BY_ID[id].estimateWidth(opts));
   const lineGroups = packLines(widths, opts);
   const rawHelpers = collectHelpers(fragments);

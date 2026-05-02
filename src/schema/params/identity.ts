@@ -15,6 +15,8 @@ function rw(key: string, id: string): import('../types').ParamDef['render'] {
 }
 
 const w = (n: number) => () => n;
+const EMOJI_EXTRA = 3;
+const wE = (n: number) => (opts: ResolvedOptions) => n + (opts.global.useEmojis ? EMOJI_EXTRA : 0);
 const wTruncate = (defaultMax: number) => (opts: ResolvedOptions) =>
   (opts.sub.truncate?.maxChars ?? defaultMax) + 2;
 
@@ -30,11 +32,11 @@ export const IDENTITY_PARAMS: ParamDef[] = [
   { id: 'effort', label: 'Reasoning effort', group: 'identity',
     jsonPath: 'effort.level', estimateWidth: w(8), render: rw('effort', 'effort') },
   { id: 'thinking', label: 'Thinking enabled', group: 'identity', emoji: '💭',
-    jsonPath: 'thinking.enabled', estimateWidth: w(10), render: rw('thinking', 'thinking') },
+    jsonPath: 'thinking.enabled', estimateWidth: wE(10), render: rw('thinking', 'thinking') },
   { id: 'vim', label: 'Vim mode', group: 'identity',
     jsonPath: 'vim.mode', estimateWidth: w(11), render: rw('vim', 'vim') },
   { id: 'agent', label: 'Agent name', group: 'identity', emoji: '🤖',
-    jsonPath: 'agent.name', estimateWidth: w(20), render: rw('agent', 'agent') },
+    jsonPath: 'agent.name', estimateWidth: wE(20), render: rw('agent', 'agent') },
   { id: 'session_name', label: 'Session name', group: 'identity',
     jsonPath: 'session_name',
     subOptions: [{ kind: 'truncate', defaultMaxChars: 24, basenameOnly: false }],

@@ -15,6 +15,8 @@ function rw(key: string, id: string): import('../types').ParamDef['render'] {
 }
 
 const w = (n: number) => () => n;
+const EMOJI_EXTRA = 3;
+const wE = (n: number) => (opts: ResolvedOptions) => n + (opts.global.useEmojis ? EMOJI_EXTRA : 0);
 const wBar = (defaultBarWidth: number) => (opts: ResolvedOptions) =>
   (opts.sub.bar?.width ?? defaultBarWidth) + 16;
 
@@ -29,7 +31,7 @@ export const RATE_LIMITS_PARAMS: ParamDef[] = [
   { id: 'rate_5h_resets', label: '5h reset time', group: 'rate_limits', emoji: '⏱️',
     subOptions: [{ kind: 'timestamp', default: 'until' }],
     jsonPath: 'rate_limits.five_hour.resets_at',
-    estimateWidth: w(12), render: rw('rate5hResets', 'rate_5h_resets') },
+    estimateWidth: wE(12), render: rw('rate5hResets', 'rate_5h_resets') },
   { id: 'rate_7d_pct', label: '7d limit %', group: 'rate_limits',
     jsonPath: 'rate_limits.seven_day.used_percentage',
     estimateWidth: w(8), render: rw('rate7dPct', 'rate_7d_pct') },
@@ -40,5 +42,5 @@ export const RATE_LIMITS_PARAMS: ParamDef[] = [
   { id: 'rate_7d_resets', label: '7d reset time', group: 'rate_limits', emoji: '⏱️',
     subOptions: [{ kind: 'timestamp', default: 'until' }],
     jsonPath: 'rate_limits.seven_day.resets_at',
-    estimateWidth: w(12), render: rw('rate7dResets', 'rate_7d_resets') },
+    estimateWidth: wE(12), render: rw('rate7dResets', 'rate_7d_resets') },
 ];

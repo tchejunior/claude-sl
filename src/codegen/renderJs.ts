@@ -11,9 +11,9 @@ export const RJ: Record<string, RenderFn> = {
   version: () => f([], "d.version??'?'"),
   outputStyle: () => f([], "d.output_style?.name??'default'"),
   effort: () => f([], "d.effort?.level??'?'"),
-  thinking: () => f([], "d.thinking?.enabled?'thinking:on':''"),
+  thinking: (opts) => f([], opts.global.useEmojis ? "d.thinking?.enabled?'💭':''" : "d.thinking?.enabled?'thinking:on':''"),
   vim: (opts) => f([], opts.global.hideVimModeIndicator ? "''" : "d.vim?.mode??''"),
-  agent: () => f([], "d.agent?.name??''"),
+  agent: (opts) => f([], opts.global.useEmojis ? "(d.agent?.name?'🤖 '+d.agent.name:'')" : "d.agent?.name??''"),
   sessionName: (opts) => {
     const max = opts.sub.truncate?.maxChars ?? 24;
     return f(['__truncatePath'], `__truncatePath(d.session_name??'',${max},false)`);
