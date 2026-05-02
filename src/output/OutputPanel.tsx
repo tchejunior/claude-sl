@@ -117,7 +117,6 @@ export default function OutputPanel() {
           bgcolor: '#0d1117', borderRadius: 1, minHeight: 36,
           whiteSpace: 'pre', overflowX: 'auto',
         }}
-          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: previewHtml || '<span style="color:#555">Select parameters to preview…</span>' }}
         />
 

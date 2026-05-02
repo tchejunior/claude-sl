@@ -1,7 +1,9 @@
 export const EMOJI_WIDTH = 2;
 
+/* eslint-disable no-control-regex */
 const ANSI_CSI = /\x1b\[[0-9;]*m/g;
 const ANSI_OSC8 = /\x1b\]8;;[^\x07]*\x07/g;
+/* eslint-enable no-control-regex */
 const EMOJI_RE = /\p{Extended_Pictographic}/gu;
 
 export function stripAnsi(s: string): string {

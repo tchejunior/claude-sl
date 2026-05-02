@@ -2,6 +2,7 @@ export const PS_HELPERS: Record<string, string> = {
   ANSI_COLORS: `$ESC=if($PSVersionTable.PSVersion.Major -ge 7){"$([char]27)"}else{[char]27}
 $G="$ESC[32m"; $Y="$ESC[33m"; $R="$ESC[31m"; $C="$ESC[36m"; $X="$ESC[0m"`,
 
+  // eslint-disable-next-line no-useless-escape
   __stripAnsi: `function Strip-Ansi($s){ $s -replace '\x1b\[[0-9;]*m','' -replace '\x1b\]8;;[^\x07]*\x07','' }`,
 
   __bar: `function __Bar($pct,$w=10,$wa=75,$ra=90){
@@ -47,7 +48,7 @@ $G="$ESC[32m"; $Y="$ESC[33m"; $R="$ESC[31m"; $C="$ESC[36m"; $X="$ESC[0m"`,
 }`,
 
   __cacheGit: `function __CacheGit($sid,$ttl,$run){
-  $f="$env:TEMP\statusline-git-cache-$sid"
+  $f="$env:TEMP\\statusline-git-cache-$sid"
   try{$c=Get-Content $f -Raw|ConvertFrom-Json;if(([DateTimeOffset]::UtcNow.ToUnixTimeSeconds()-$c.ts) -lt $ttl){return $c.d}}catch{}
   $d=& $run
   try{@{ts=[DateTimeOffset]::UtcNow.ToUnixTimeSeconds();d=$d}|ConvertTo-Json -Compress|Set-Content $f}catch{}

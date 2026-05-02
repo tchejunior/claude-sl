@@ -1,0 +1,40 @@
+name: deploy
+on:
+  push:
+    branches: [main]
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20', cache: 'npm' }
+      - run: npm ci
+      - run: npm run build
+
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
+
+      - name: Add known hosts
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VPS_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
+
+      - name: Rsync to VPS
+        run: |
+          rsync -az --delete dist/ \
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/var/www/claudesl/releases/${{ github.sha }}/
+
+      - name: Swap symlink + reload nginx + prune old releases
+        run: |
+          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "
+            ln -sfn /var/www/claudesl/releases/${{ github.sha }} /var/www/claudesl/current &&
+            sudo /usr/sbin/nginx -t &&
+            sudo /bin/systemctl reload nginx &&
+            ls -1dt /var/www/claudesl/releases/*/ | tail -n +6 | xargs -r rm -rf
+          "

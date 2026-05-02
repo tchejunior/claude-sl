@@ -22,9 +22,11 @@ const opts = (): ResolvedOptions => ({
 
 const PARAMS: ParamId[] = ['model_display', 'version', 'effort'];
 
+/* eslint-disable no-control-regex */
 function stripAnsi(s: string): string {
   return s.replace(/\x1b\[[0-9;]*m/g, '').replace(/\x1b\]8;;[^\x07]*\x07/g, '');
 }
+/* eslint-enable no-control-regex */
 
 function runScript(cmd: string, args: string[], script: string): string {
   const ext = cmd === 'node' ? 'js' : cmd === 'python3' || cmd === 'python' ? 'py' : 'sh';
