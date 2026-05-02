@@ -58,9 +58,17 @@ function evalParam(id: ParamId, opts: ResolvedOptions): string {
     case 'version': return String(d.version ?? '?');
     case 'output_style': return String((d.output_style as Record<string,string>)?.name ?? 'default');
     case 'effort': return String((d.effort as Record<string,string>)?.level ?? '?');
-    case 'thinking': return (d.thinking as Record<string,boolean>)?.enabled ? 'thinking:on' : '';
+    case 'thinking': {
+      const enabled = (d.thinking as Record<string,boolean>)?.enabled;
+      if (!enabled) return '';
+      return g.useEmojis ? '💭' : 'thinking:on';
+    }
     case 'vim': return g.hideVimModeIndicator ? '' : String((d.vim as Record<string,string>)?.mode ?? '');
-    case 'agent': return String((d.agent as Record<string,string>)?.name ?? '');
+    case 'agent': {
+      const name = (d.agent as Record<string,string>)?.name ?? '';
+      if (!name) return '';
+      return g.useEmojis ? '🤖 ' + name : name;
+    }
     case 'session_name': return truncatePath(String(d.session_name ?? ''), sub.truncate?.maxChars ?? 24, false);
 
     case 'cwd': return truncatePath(String((d.workspace as Record<string,string>)?.current_dir ?? d.cwd ?? ''), sub.truncate?.maxChars ?? 40, sub.truncate?.basenameOnly ?? true);
@@ -71,7 +79,7 @@ function evalParam(id: ParamId, opts: ResolvedOptions): string {
     case 'worktree_branch': return String((d.worktree as Record<string,string>)?.branch ?? '');
     case 'worktree_original_branch': return String((d.worktree as Record<string,string>)?.original_branch ?? '');
 
-    case 'git_branch': return '🌿 main (preview)';
+    case 'git_branch': return opts.global.useEmojis ? '🌿 main (preview)' : 'main (preview)';
     case 'git_staged_count': return '';
     case 'git_modified_count': return '';
     case 'git_remote_link': return '';
@@ -105,9 +113,19 @@ function evalParam(id: ParamId, opts: ResolvedOptions): string {
   }
 }
 
+const CATEGORY_A_PREVIEW: ReadonlySet<ParamId> = new Set(['thinking', 'agent', 'git_branch'] as ParamId[]);
+
 export function runPreview(selected: ParamId[], opts: ResolvedOptions): string {
   if (selected.length === 0) return '';
-  const parts = selected.map((id) => evalParam(id, opts));
+  const parts = selected.map((id) => {
+    const raw = evalParam(id, opts);
+    if (!opts.global.useEmojis || CATEGORY_A_PREVIEW.has(id)) return raw;
+    const emoji = PARAMS_BY_ID[id].emoji;
+    if (!emoji || !raw) return raw;
+    // Only add prefix if the value doesn't already start with the emoji
+    if (raw.startsWith(emoji)) return raw;
+    return emoji + ' ' + raw;
+  });
   const widths = selected.map((id) => PARAMS_BY_ID[id].estimateWidth(opts));
   const groups = packLines(widths, opts);
   const lines = groups.map((g) => {

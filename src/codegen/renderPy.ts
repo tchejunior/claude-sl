@@ -11,9 +11,9 @@ export const RPY: Record<string, RenderFn> = {
   version: () => f([], "d.get('version','?')"),
   outputStyle: () => f([], "(d.get('output_style') or {}).get('name','default')"),
   effort: () => f([], "(d.get('effort') or {}).get('level','?')"),
-  thinking: () => f([], "'thinking:on' if (d.get('thinking') or {}).get('enabled') else ''"),
+  thinking: (opts) => f([], opts.global.useEmojis ? "'💭' if (d.get('thinking') or {}).get('enabled') else ''" : "'thinking:on' if (d.get('thinking') or {}).get('enabled') else ''"),
   vim: (opts) => f([], opts.global.hideVimModeIndicator ? "''" : "(d.get('vim') or {}).get('mode','')"),
-  agent: () => f([], "(d.get('agent') or {}).get('name','')"),
+  agent: (opts) => f([], opts.global.useEmojis ? "('🤖 '+(d.get('agent') or {}).get('name','') if (d.get('agent') or {}).get('name') else '')" : "(d.get('agent') or {}).get('name','')"),
   sessionName: (opts) => {
     const max = opts.sub.truncate?.maxChars ?? 24;
     return f(['__truncatePath'], `__truncate_path(d.get('session_name',''),${max},False)`);

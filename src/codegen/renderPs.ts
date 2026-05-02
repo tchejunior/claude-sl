@@ -10,11 +10,15 @@ export const RPS: Record<string, RenderFn> = {
   version: () => f([], '$SL_VERSION', '$SL_VERSION=if($d.version){$d.version}else{"?"}'),
   outputStyle: () => f([], '$OUTPUT_STYLE', '$OUTPUT_STYLE=if($d.output_style.name){$d.output_style.name}else{"default"}'),
   effort: () => f([], '$EFFORT', '$EFFORT=if($d.effort.level){$d.effort.level}else{"?"}'),
-  thinking: () => f([], '$THINKING', '$THINKING=if($d.thinking.enabled){"thinking:on"}else{""}'),
+  thinking: (opts) => f([], '$THINKING', opts.global.useEmojis
+    ? '$THINKING=if($d.thinking.enabled){"💭"}else{""}'
+    : '$THINKING=if($d.thinking.enabled){"thinking:on"}else{""}'),
   vim: (opts) => opts.global.hideVimModeIndicator
     ? f([], '""')
     : f([], '$VIM_MODE', '$VIM_MODE=if($d.vim.mode){$d.vim.mode}else{""}'),
-  agent: () => f([], '$AGENT_NAME', '$AGENT_NAME=if($d.agent.name){$d.agent.name}else{""}'),
+  agent: (opts) => f([], '$AGENT_NAME', opts.global.useEmojis
+    ? '$AGENT_NAME=if($d.agent.name){"🤖 $($d.agent.name)"}else{""}'
+    : '$AGENT_NAME=if($d.agent.name){$d.agent.name}else{""}'),
   sessionName: (opts) => {
     const max = opts.sub.truncate?.maxChars ?? 24;
     return f(

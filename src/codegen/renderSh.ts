@@ -10,11 +10,15 @@ export const RSH: Record<string, RenderFn> = {
   version: () => f([], '"${SL_VERSION}"', 'SL_VERSION=$(echo "$input"|jq -r \'.version//"?"\')'),
   outputStyle: () => f([], '"${OUTPUT_STYLE}"', 'OUTPUT_STYLE=$(echo "$input"|jq -r \'.output_style.name//"default"\')'),
   effort: () => f([], '"${EFFORT}"', 'EFFORT=$(echo "$input"|jq -r \'.effort.level//"?"\')'),
-  thinking: () => f([], '"${THINKING}"', 'THINKING=$(echo "$input"|jq -r \'if .thinking.enabled then "thinking:on" else "" end\')'),
+  thinking: (opts) => f([], '"${THINKING}"', opts.global.useEmojis
+    ? 'THINKING=$(echo "$input"|jq -r \'if .thinking.enabled then "💭" else "" end\')'
+    : 'THINKING=$(echo "$input"|jq -r \'if .thinking.enabled then "thinking:on" else "" end\')'),
   vim: (opts) => opts.global.hideVimModeIndicator
     ? f([], '""')
     : f([], '"${VIM_MODE}"', 'VIM_MODE=$(echo "$input"|jq -r \'.vim.mode//empty\')'),
-  agent: () => f([], '"${AGENT_NAME}"', 'AGENT_NAME=$(echo "$input"|jq -r \'.agent.name//empty\')'),
+  agent: (opts) => f([], '"${AGENT_NAME}"', opts.global.useEmojis
+    ? 'AGENT_NAME=$(echo "$input"|jq -r \'.agent.name//empty\'|awk \'NF{print "🤖 " $0}\')'
+    : 'AGENT_NAME=$(echo "$input"|jq -r \'.agent.name//empty\')'),
   sessionName: (opts) => {
     const max = opts.sub.truncate?.maxChars ?? 24;
     return f(

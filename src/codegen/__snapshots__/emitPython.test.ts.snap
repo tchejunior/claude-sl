@@ -33,8 +33,8 @@ def main():
         d = json.load(sys.stdin)
         print(__pack([
             (d.get('model') or {}).get('display_name','?'),
-            __truncate_path((d.get('workspace') or {}).get('current_dir','') or d.get('cwd',''),40,True),
-            __bar((d.get('context_window') or {}).get('used_percentage',0),10,75,90),
+            (f'📁 {_v}' if (_v:=str(__truncate_path((d.get('workspace') or {}).get('current_dir','') or d.get('cwd',''),40,True))) else ''),
+            (f'🧠 {_v}' if (_v:=str(__bar((d.get('context_window') or {}).get('used_percentage',0),10,75,90))) else ''),
         ], " | ", 100, False, 10))
     except Exception:
         print('[?]')
@@ -93,7 +93,7 @@ def main():
         __GIT = __cache_git(d.get('session_id','default'), 5, __run_git)
         print(__pack([
             (d.get('model') or {}).get('display_name','?'),
-            __GIT[0],
+            (f'🌿 {_v}' if (_v:=str(__GIT[0])) else ''),
         ], " | ", 100, False, 10))
     except Exception:
         print('[?]')
