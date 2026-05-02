@@ -13,6 +13,7 @@ interface LinkSlot { url: string; text: string; }
 
 export function ansiToHtml(input: string): string {
   const slots: LinkSlot[] = [];
+  /* eslint-disable no-control-regex */
   const linkRe = /\x1b\]8;;([^\x07]*)\x07([^\x1b]*)\x1b\]8;;\x07/g;
   const withSlots = input.replace(linkRe, (_m, url, text) => {
     slots.push({ url, text });
@@ -20,6 +21,7 @@ export function ansiToHtml(input: string): string {
   });
 
   const csi = /\x1b\[([0-9;]*)m/g;
+  /* eslint-enable no-control-regex */
   let result = '';
   let cursor = 0;
   let openSpan = false;
@@ -42,6 +44,7 @@ export function ansiToHtml(input: string): string {
   result += escapeHtml(withSlots.slice(cursor));
   if (openSpan) result += '</span>';
 
+  // eslint-disable-next-line no-control-regex
   result = result.replace(/\x00SLOT(\d+)\x00/g, (_m, idxStr) => {
     const slot = slots[Number(idxStr)];
     return `<a href="${escapeHtml(slot.url)}" target="_blank" rel="noopener">${escapeHtml(slot.text)}</a>`;
