@@ -1,50 +1,169 @@
 {
-  "fetched_at": "2026-04-30T00:00:00Z",
+  "fetched_at": "2026-05-02T11:35:16.125312+00:00",
   "source_url": "https://code.claude.com/docs/en/statusline",
   "fields": [
-    { "path": "cwd", "description": "Current working directory" },
-    { "path": "session_id", "description": "Unique session identifier" },
-    { "path": "session_name", "description": "Custom session name" },
-    { "path": "transcript_path", "description": "Path to conversation transcript file" },
-    { "path": "model.id", "description": "Current model identifier" },
-    { "path": "model.display_name", "description": "Current model display name" },
-    { "path": "workspace.current_dir", "description": "Current working directory; preferred over cwd" },
-    { "path": "workspace.project_dir", "description": "Directory where Claude Code was launched" },
-    { "path": "workspace.added_dirs", "description": "Additional directories added via /add-dir" },
-    { "path": "workspace.git_worktree", "description": "Git worktree name when inside a linked worktree" },
-    { "path": "version", "description": "Claude Code version" },
-    { "path": "output_style.name", "description": "Name of the current output style" },
-    { "path": "cost.total_cost_usd", "description": "Estimated session cost in USD" },
-    { "path": "cost.total_duration_ms", "description": "Total wall-clock time, ms" },
-    { "path": "cost.total_api_duration_ms", "description": "Total time waiting for API responses, ms" },
-    { "path": "cost.total_lines_added", "description": "Lines of code added" },
-    { "path": "cost.total_lines_removed", "description": "Lines of code removed" },
-    { "path": "context_window.total_input_tokens", "description": "Cumulative input tokens" },
-    { "path": "context_window.total_output_tokens", "description": "Cumulative output tokens" },
-    { "path": "context_window.context_window_size", "description": "Max context window size in tokens" },
-    { "path": "context_window.used_percentage", "description": "Percentage of context window used" },
-    { "path": "context_window.remaining_percentage", "description": "Percentage of context window remaining" },
-    { "path": "context_window.current_usage.input_tokens", "description": "Input tokens in current context" },
-    { "path": "context_window.current_usage.output_tokens", "description": "Output tokens generated" },
-    { "path": "context_window.current_usage.cache_creation_input_tokens", "description": "Tokens written to cache" },
-    { "path": "context_window.current_usage.cache_read_input_tokens", "description": "Tokens read from cache" },
-    { "path": "exceeds_200k_tokens", "description": "Whether token count exceeds 200k" },
-    { "path": "effort.level", "description": "Current reasoning effort" },
-    { "path": "thinking.enabled", "description": "Whether extended thinking is enabled" },
-    { "path": "rate_limits.five_hour.used_percentage", "description": "5-hour limit consumed" },
-    { "path": "rate_limits.five_hour.resets_at", "description": "Unix epoch when 5h window resets" },
-    { "path": "rate_limits.seven_day.used_percentage", "description": "7-day limit consumed" },
-    { "path": "rate_limits.seven_day.resets_at", "description": "Unix epoch when 7d window resets" },
-    { "path": "vim.mode", "description": "Current vim mode" },
-    { "path": "agent.name", "description": "Agent name with --agent flag" },
-    { "path": "worktree.name", "description": "Active worktree name" },
-    { "path": "worktree.path", "description": "Absolute path to worktree directory" },
-    { "path": "worktree.branch", "description": "Git branch of the worktree" },
-    { "path": "worktree.original_cwd", "description": "Directory before entering worktree" },
-    { "path": "worktree.original_branch", "description": "Branch before entering worktree" }
+    {
+      "path": "model.id",
+      "description": "Current model identifier and display name"
+    },
+    {
+      "path": "model.display_name",
+      "description": "Current model identifier and display name"
+    },
+    {
+      "path": "cwd",
+      "description": "Current working directory. Both fields contain the same value; workspace.current_dir is preferred for consistency with workspace.project_dir."
+    },
+    {
+      "path": "workspace.current_dir",
+      "description": "Current working directory. Both fields contain the same value; workspace.current_dir is preferred for consistency with workspace.project_dir."
+    },
+    {
+      "path": "workspace.project_dir",
+      "description": "Directory where Claude Code was launched, which may differ from cwd if the working directory changes during a session"
+    },
+    {
+      "path": "workspace.added_dirs",
+      "description": "Additional directories added via /add-dir or --add-dir. Empty array if none have been added"
+    },
+    {
+      "path": "workspace.git_worktree",
+      "description": "Git worktree name when the current directory is inside a linked worktree created with git worktree add. Absent in the main working tree. Populated for any git worktree, unlike worktree.* which applies only to --worktree sessions"
+    },
+    {
+      "path": "cost.total_cost_usd",
+      "description": "Estimated session cost in USD, computed client-side. May differ from your actual bill"
+    },
+    {
+      "path": "cost.total_duration_ms",
+      "description": "Total wall-clock time since the session started, in milliseconds"
+    },
+    {
+      "path": "cost.total_api_duration_ms",
+      "description": "Total time spent waiting for API responses in milliseconds"
+    },
+    {
+      "path": "cost.total_lines_added",
+      "description": "Lines of code changed"
+    },
+    {
+      "path": "cost.total_lines_removed",
+      "description": "Lines of code changed"
+    },
+    {
+      "path": "context_window.total_input_tokens",
+      "description": "Cumulative token counts across the session"
+    },
+    {
+      "path": "context_window.total_output_tokens",
+      "description": "Cumulative token counts across the session"
+    },
+    {
+      "path": "context_window.context_window_size",
+      "description": "Maximum context window size in tokens. 200000 by default, or 1000000 for models with extended context."
+    },
+    {
+      "path": "context_window.used_percentage",
+      "description": "Pre-calculated percentage of context window used"
+    },
+    {
+      "path": "context_window.remaining_percentage",
+      "description": "Pre-calculated percentage of context window remaining"
+    },
+    {
+      "path": "context_window.current_usage",
+      "description": "Token counts from the last API call, described in context window fields"
+    },
+    {
+      "path": "exceeds_200k_tokens",
+      "description": "Whether the total token count (input, cache, and output tokens combined) from the most recent API response exceeds 200k. This is a fixed threshold regardless of actual context window size."
+    },
+    {
+      "path": "effort.level",
+      "description": "Current reasoning effort (low, medium, high, xhigh, or max). Reflects the live session value, including mid-session /effort changes. Absent when the current model does not support the effort parameter"
+    },
+    {
+      "path": "thinking.enabled",
+      "description": "Whether extended thinking is enabled for the session"
+    },
+    {
+      "path": "rate_limits.five_hour.used_percentage",
+      "description": "Percentage of the 5-hour or 7-day rate limit consumed, from 0 to 100"
+    },
+    {
+      "path": "rate_limits.seven_day.used_percentage",
+      "description": "Percentage of the 5-hour or 7-day rate limit consumed, from 0 to 100"
+    },
+    {
+      "path": "rate_limits.five_hour.resets_at",
+      "description": "Unix epoch seconds when the 5-hour or 7-day rate limit window resets"
+    },
+    {
+      "path": "rate_limits.seven_day.resets_at",
+      "description": "Unix epoch seconds when the 5-hour or 7-day rate limit window resets"
+    },
+    {
+      "path": "session_id",
+      "description": "Unique session identifier"
+    },
+    {
+      "path": "session_name",
+      "description": "Custom session name set with the --name flag or /rename. Absent if no custom name has been set"
+    },
+    {
+      "path": "transcript_path",
+      "description": "Path to conversation transcript file"
+    },
+    {
+      "path": "version",
+      "description": "Claude Code version"
+    },
+    {
+      "path": "output_style.name",
+      "description": "Name of the current output style"
+    },
+    {
+      "path": "vim.mode",
+      "description": "Current vim mode (NORMAL, INSERT, VISUAL, or VISUAL LINE) when vim mode is enabled"
+    },
+    {
+      "path": "agent.name",
+      "description": "Agent name when running with the --agent flag or agent settings configured"
+    },
+    {
+      "path": "worktree.name",
+      "description": "Name of the active worktree. Present only during --worktree sessions"
+    },
+    {
+      "path": "worktree.path",
+      "description": "Absolute path to the worktree directory"
+    },
+    {
+      "path": "worktree.branch",
+      "description": "Git branch name for the worktree (for example, \"worktree-my-feature\"). Absent for hook-based worktrees"
+    },
+    {
+      "path": "worktree.original_cwd",
+      "description": "The directory Claude was in before entering the worktree"
+    },
+    {
+      "path": "worktree.original_branch",
+      "description": "Git branch checked out before entering the worktree. Absent for hook-based worktrees"
+    }
   ],
   "enums": {
-    "effort.level": ["low", "medium", "high", "xhigh", "max"],
-    "vim.mode": ["NORMAL", "INSERT", "VISUAL", "VISUAL LINE"]
+    "effort.level": [
+      "low",
+      "medium",
+      "high",
+      "xhigh",
+      "max"
+    ],
+    "vim.mode": [
+      "NORMAL",
+      "INSERT",
+      "VISUAL",
+      "VISUAL LINE"
+    ]
   }
 }
