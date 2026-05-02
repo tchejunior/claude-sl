@@ -24,7 +24,7 @@ function commandFor(os: EmitOs, fmt: EmitFmt): string {
   if (fmt === 'sh') return '~/.claude/statusline.sh';
   if (fmt === 'py') return '~/.claude/statusline.py';
   if (fmt === 'js') return '~/.claude/statusline.js';
-  throw new Error(`Unsupported os/format: ${os}/${fmt}`);
+  return '~/.claude/statusline.sh';
 }
 
 export function emitSettings(input: EmitSettingsInput, opts: ResolvedOptions): string {

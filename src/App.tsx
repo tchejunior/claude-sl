@@ -10,16 +10,18 @@ export default function App() {
       <Typography variant="h5" sx={{ mb: 2 }}>Claude Code Status Line Builder</Typography>
       <Box sx={{
         display: 'grid',
-        gridTemplateColumns: { xs: '1fr', md: 'minmax(380px, 1fr) 1fr' },
+        gridTemplateColumns: { xs: '1fr', md: '2fr 3fr' },
         gap: 2,
         alignItems: 'start',
       }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <GlobalControls />
           <ParamList />
-          <SelectedOrder />
         </Box>
-        <OutputPanel />
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <SelectedOrder />
+          <OutputPanel />
+        </Box>
       </Box>
     </Box>
   );

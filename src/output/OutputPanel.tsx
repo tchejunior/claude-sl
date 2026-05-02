@@ -32,16 +32,37 @@ export default function OutputPanel() {
 
   const script = useMemo(() => {
     if (selected.length === 0) return '';
-    if (format === 'js') return emitJs(selected, opts);
-    if (format === 'py') return emitPython(selected, opts);
-    if (format === 'ps') return emitPowershell(selected, opts);
-    return emitBash(selected, opts);
+    try {
+      if (format === 'js') return emitJs(selected, opts);
+      if (format === 'py') return emitPython(selected, opts);
+      if (format === 'ps') return emitPowershell(selected, opts);
+      return emitBash(selected, opts);
+    } catch (e) {
+      return `# Error generating script: ${e}`;
+    }
   }, [selected, opts, format]);
 
-  const settings = useMemo(() => emitSettings({ os, format, selected }, opts), [os, format, selected, opts]);
+  const settings = useMemo(() => {
+    try {
+      return emitSettings({ os, format, selected }, opts);
+    } catch (e) {
+      return `# Error: ${e}`;
+    }
+  }, [os, format, selected, opts]);
+
   const preview = useMemo(() => runPreview(selected, opts), [selected, opts]);
   // ansiToHtml escapes all raw text through escapeHtml before injecting HTML
   const previewHtml = useMemo(() => ansiToHtml(preview), [preview]);
+
+  const handleSetFormat = useCallback((f: typeof format) => {
+    setFormat(f);
+    if (f === 'ps') setOs('win');
+  }, [setFormat, setOs]);
+
+  const handleSetOs = useCallback((o: typeof os) => {
+    setOs(o);
+    if (o !== 'win' && format === 'ps') setFormat('sh');
+  }, [setOs, setFormat, format]);
 
   const copy = useCallback((text: string) => {
     navigator.clipboard.writeText(text).then(() => {
@@ -68,14 +89,22 @@ export default function OutputPanel() {
         <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
           <Typography variant="subtitle1">Output</Typography>
           <Stack direction="row" spacing={1}>
-            <ToggleButtonGroup size="small" exclusive value={os} onChange={(_, v) => v && setOs(v)}>
-              {(['mac','linux','win'] as const).map((o) => (
-                <ToggleButton key={o} value={o}>{o}</ToggleButton>
+            <ToggleButtonGroup size="small" exclusive value={os} onChange={(_, v) => v && handleSetOs(v)}>
+              {(['mac', 'linux', 'win'] as const).map((o) => (
+                <ToggleButton key={o} value={o} disabled={format === 'ps' && o !== 'win'}>
+                  {o}
+                </ToggleButton>
               ))}
             </ToggleButtonGroup>
-            <ToggleButtonGroup size="small" exclusive value={format} onChange={(_, v) => v && setFormat(v)}>
-              {(['sh','py','js','ps'] as const).map((f) => (
-                <ToggleButton key={f} value={f}>{LANG_LABEL[f]}</ToggleButton>
+            <ToggleButtonGroup size="small" exclusive value={format} onChange={(_, v) => v && handleSetFormat(v)}>
+              {(['sh', 'py', 'js', 'ps'] as const).map((f) => (
+                <Tooltip key={f} title={f === 'ps' && os !== 'win' ? 'PowerShell requires Windows' : ''}>
+                  <span>
+                    <ToggleButton value={f} disabled={f === 'ps' && os !== 'win'}>
+                      {LANG_LABEL[f]}
+                    </ToggleButton>
+                  </span>
+                </Tooltip>
               ))}
             </ToggleButtonGroup>
           </Stack>
@@ -83,7 +112,8 @@ export default function OutputPanel() {
 
         {/* Live preview - ansiToHtml escapes all raw text, safe from XSS */}
         <Box sx={{
-          fontFamily: 'monospace', fontSize: 13, p: 1.5, mb: 2,
+          fontFamily: '"Consolas", "Courier New", monospace, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji"',
+          fontSize: 13, p: 1.5, mb: 2,
           bgcolor: '#0d1117', borderRadius: 1, minHeight: 36,
           whiteSpace: 'pre', overflowX: 'auto',
         }}

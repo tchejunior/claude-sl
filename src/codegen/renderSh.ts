@@ -109,7 +109,7 @@ export const RSH: Record<string, RenderFn> = {
   ctxCacheCreation: () => f([], '"${CTX_CW}cw"', 'CTX_CW=$(echo "$input"|jq -r \'.context_window.current_usage.cache_creation_input_tokens//0\')'),
   exceeds200k: () => f([], '"$(echo "$input"|jq -r \'if .exceeds_200k_tokens then "!200k" else "" end\')"'),
 
-  costTotalUsd: () => f([], '"$$(echo "$input"|jq -r \'.cost.total_cost_usd//0|.*10000|round/10000\')"'),
+  costTotalUsd: () => f([], '"\\$$(echo "$input"|jq -r \'.cost.total_cost_usd//0|.*10000|round/10000\')"'),
   costDuration: () => f(['__duration'], '"$(__duration "$(echo "$input"|jq -r \'.cost.total_duration_ms//0\')")"'),
   costApiDuration: () => f(['__duration'], '"$(__duration "$(echo "$input"|jq -r \'.cost.total_api_duration_ms//0\')")"'),
   costLines: () => f([], '"+$(echo "$input"|jq -r \'.cost.total_lines_added//0\') -$(echo "$input"|jq -r \'.cost.total_lines_removed//0\')"'),
