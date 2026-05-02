@@ -45,14 +45,14 @@ export const RPY: Record<string, RenderFn> = {
     const [wa, ra] = opts.sub.colorize?.thresholds ?? [1, 1];
     return f(
       opts.global.cacheGit ? ['ANSI_COLORS', '__git', '__cacheGit'] : ['ANSI_COLORS', '__git'],
-      `(f'{{R if __GIT[1]>=${ra} else Y if __GIT[1]>=${wa} else G}}S:{{__GIT[1]}}{{X}}' if __GIT[1]>0 else '')`,
+      `(f'{R if __GIT[1]>=${ra} else Y if __GIT[1]>=${wa} else G}S:{__GIT[1]}{X}' if __GIT[1]>0 else '')`,
     );
   },
   gitModifiedCount: (opts) => {
     const [wa, ra] = opts.sub.colorize?.thresholds ?? [1, 1];
     return f(
       opts.global.cacheGit ? ['ANSI_COLORS', '__git', '__cacheGit'] : ['ANSI_COLORS', '__git'],
-      `(f'{{R if __GIT[2]>=${ra} else Y if __GIT[2]>=${wa} else G}}M:{{__GIT[2]}}{{X}}' if __GIT[2]>0 else '')`,
+      `(f'{R if __GIT[2]>=${ra} else Y if __GIT[2]>=${wa} else G}M:{__GIT[2]}{X}' if __GIT[2]>0 else '')`,
     );
   },
   gitRemoteLink: (opts) => f(
@@ -63,11 +63,11 @@ export const RPY: Record<string, RenderFn> = {
   // context
   ctxUsedPct: (opts) => {
     const [wa, ra] = opts.sub.colorize?.thresholds ?? [75, 90];
-    return f(['ANSI_COLORS'], `(lambda p:f'{{R if p>=${ra} else Y if p>=${wa} else G}}{{p}}%{{X}}')(int((d.get('context_window') or {}).get('used_percentage',0)))`);
+    return f(['ANSI_COLORS'], `(lambda p:f'{R if p>=${ra} else Y if p>=${wa} else G}{p}%{X}')(int((d.get('context_window') or {}).get('used_percentage',0)))`);
   },
   ctxRemainingPct: (opts) => {
     const [wa, ra] = opts.sub.colorize?.thresholds ?? [75, 90];
-    return f(['ANSI_COLORS'], `(lambda r,u:(f'{{R if u>=${ra} else Y if u>=${wa} else G}}{{r}}% left{{X}}'))(int((d.get('context_window') or {}).get('remaining_percentage',100)),100-int((d.get('context_window') or {}).get('remaining_percentage',100)))`);
+    return f(['ANSI_COLORS'], `(lambda r,u:f'{R if u>=${ra} else Y if u>=${wa} else G}{r}% left{X}')(int((d.get('context_window') or {}).get('remaining_percentage',100)),100-int((d.get('context_window') or {}).get('remaining_percentage',100)))`);
   },
   ctxTotalTokens: () => f([], "f\"{(d.get('context_window') or {}).get('total_input_tokens',0)+(d.get('context_window') or {}).get('total_output_tokens',0)}tok\""),
   ctxWindowSize: () => f([], "f\"{(d.get('context_window') or {}).get('context_window_size',0)//1000}k ctx\""),
@@ -90,7 +90,7 @@ export const RPY: Record<string, RenderFn> = {
   // rate limits
   rate5hPct: (opts) => {
     const [wa, ra] = opts.sub.colorize?.thresholds ?? [75, 90];
-    return f(['ANSI_COLORS'], `(lambda p:f'{{R if p>=${ra} else Y if p>=${wa} else G}}5h:{{p}}%{{X}}')(int((d.get('rate_limits') or {}).get('five_hour',{}).get('used_percentage',0)))`);
+    return f(['ANSI_COLORS'], `(lambda p:f'{R if p>=${ra} else Y if p>=${wa} else G}5h:{p}%{X}')(int((d.get('rate_limits') or {}).get('five_hour',{}).get('used_percentage',0)))`);
   },
   rate5hBar: (opts) => {
     const w = opts.sub.bar?.width ?? 10;
@@ -103,7 +103,7 @@ export const RPY: Record<string, RenderFn> = {
   },
   rate7dPct: (opts) => {
     const [wa, ra] = opts.sub.colorize?.thresholds ?? [75, 90];
-    return f(['ANSI_COLORS'], `(lambda p:f'{{R if p>=${ra} else Y if p>=${wa} else G}}7d:{{p}}%{{X}}')(int((d.get('rate_limits') or {}).get('seven_day',{}).get('used_percentage',0)))`);
+    return f(['ANSI_COLORS'], `(lambda p:f'{R if p>=${ra} else Y if p>=${wa} else G}7d:{p}%{X}')(int((d.get('rate_limits') or {}).get('seven_day',{}).get('used_percentage',0)))`);
   },
   rate7dBar: (opts) => {
     const w = opts.sub.bar?.width ?? 10;

@@ -4,7 +4,7 @@ exports[`emitPowershell > basic selection snapshot 1`] = `
 "$ErrorActionPreference = 'Continue'
 try {
     $d = $input | Out-String | ConvertFrom-Json
-
+function Strip-Ansi($s){ $s -replace '[[0-9;]*m','' -replace ']8;;[^]*','' }
 function __Pack($parts,$sep=' | ',$max=100,$hard=$false,$tol=10){
   $ps=$parts|Where-Object{$_ -ne $null -and $_ -ne ''}
   if(-not $ps){return ''}

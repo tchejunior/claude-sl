@@ -23,8 +23,8 @@ export function emitJs(selected: ParamId[], opts: ResolvedOptions): string {
 
   const linesCode = lineGroups
     .map((g) => {
-      const parts = g.map((idx) => fragments[idx].expr).join(', ');
-      return `    console.log(__pack([${parts}], ${JSON.stringify(opts.global.separator)}, ${opts.global.lineLength}, ${opts.global.hardLimit}, ${opts.global.tolerancePct}));`;
+      const inner = g.map((idx) => '      ' + fragments[idx].expr).join(',\n');
+      return `    console.log(__pack([\n${inner},\n    ], ${JSON.stringify(opts.global.separator)}, ${opts.global.lineLength}, ${opts.global.hardLimit}, ${opts.global.tolerancePct}));`;
     })
     .join('\n');
 

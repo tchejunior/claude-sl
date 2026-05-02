@@ -9,7 +9,7 @@ export function emitPowershell(selected: ParamId[], opts: ResolvedOptions): stri
   const widths = selected.map((id) => PARAMS_BY_ID[id].estimateWidth(opts));
   const lineGroups = packLines(widths, opts);
   const rawHelpers = collectHelpers(fragments);
-  const helperIds = ['Strip-Ansi', '__pack', ...rawHelpers].filter(
+  const helperIds = ['__stripAnsi', '__pack', ...rawHelpers].filter(
     (h, i, a) => a.indexOf(h) === i,
   );
   const helperBlock = helperIds.map((h) => PS_HELPERS[h] ?? '').join('\n');
