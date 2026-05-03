@@ -7,13 +7,14 @@ import { SAMPLE_STDIN } from '../samples/sampleStdin';
 import { emitJs } from './emitJs';
 import { emitPython } from './emitPython';
 import { emitBash } from './emitBash';
+import { emitPowershell } from './emitPowershell';
 import type { ParamId, ResolvedOptions } from '../schema/types';
 
 const STDIN = JSON.stringify(SAMPLE_STDIN);
 
-const opts = (): ResolvedOptions => ({
+const opts = (useEmojis = false): ResolvedOptions => ({
   global: {
-    lineLength: 100, separator: ' | ', useEmojis: false, hardLimit: false,
+    lineLength: 100, separator: ' | ', useEmojis, hardLimit: false,
     tolerancePct: 10, padding: 0, refreshInterval: null,
     hideVimModeIndicator: false, cacheGit: false, cacheStalenessSec: 5,
   },
@@ -29,7 +30,10 @@ function stripAnsi(s: string): string {
 /* eslint-enable no-control-regex */
 
 function runScript(cmd: string, args: string[], script: string): string {
-  const ext = cmd === 'node' ? 'js' : cmd === 'python3' || cmd === 'python' ? 'py' : 'sh';
+  const ext = cmd === 'node' ? 'js'
+    : cmd === 'python3' || cmd === 'python' ? 'py'
+    : cmd === 'pwsh' || cmd === 'pwsh.exe' ? 'ps1'
+    : 'sh';
   const file = join(tmpdir(), `sl-test-${Date.now()}.${ext}`);
   writeFileSync(file, script, { mode: 0o755 });
   try {
@@ -39,6 +43,7 @@ function runScript(cmd: string, args: string[], script: string): string {
       timeout: 10000,
     });
     if (result.error) throw result.error;
+    if (result.status !== 0) throw new Error(`exit ${result.status}: ${result.stderr}`);
     return result.stdout ?? '';
   } finally {
     try { unlinkSync(file); } catch { /* ignore */ }
@@ -64,6 +69,12 @@ describe('JS emitter integration', () => {
     const script = emitJs(['session_id'], opts());
     const out = stripAnsi(runScript('node', [], script));
     expect(out).toContain(SAMPLE_STDIN.session_id.slice(0, 8));
+  });
+
+  it('prefixes cwd with emoji when useEmojis=true', () => {
+    const script = emitJs(['cwd'], opts(true));
+    const out = runScript('node', [], script);
+    expect(out).toContain('📁');
   });
 });
 
@@ -91,6 +102,12 @@ describe('Python emitter integration', () => {
     const out = stripAnsi(runScript('python3', [], script));
     expect(out).toContain(SAMPLE_STDIN.session_id.slice(0, 8));
   });
+
+  itPy('prefixes cwd with emoji when useEmojis=true', () => {
+    const script = emitPython(['cwd'], opts(true));
+    const out = runScript('python3', [], script);
+    expect(out).toContain('📁');
+  });
 });
 
 describe('Bash emitter integration', () => {
@@ -111,5 +128,45 @@ describe('Bash emitter integration', () => {
     const script = emitBash(['ctx_used_pct'], opts());
     const out = stripAnsi(runScript('bash', [], script));
     expect(out).toContain(`${SAMPLE_STDIN.context_window.used_percentage}%`);
+  });
+
+  itBash('outputs session_id truncated to 8 chars', () => {
+    const script = emitBash(['session_id'], opts());
+    const out = stripAnsi(runScript('bash', [], script));
+    expect(out).toContain(SAMPLE_STDIN.session_id.slice(0, 8));
+  });
+
+  itBash('prefixes cost_total_usd with emoji when useEmojis=true', () => {
+    const script = emitBash(['cost_total_usd'], opts(true));
+    const out = runScript('bash', [], script);
+    expect(out).toContain('💰');
+  });
+});
+
+describe('PowerShell emitter integration', () => {
+  const isUnix = process.platform !== 'win32';
+  const pwshCheck = spawnSync(isUnix ? 'pwsh' : 'pwsh.exe', ['--version'], { encoding: 'utf-8' });
+  const hasPwsh = pwshCheck.status === 0;
+  const itPs = hasPwsh ? it : it.skip;
+  const psCmd = isUnix ? 'pwsh' : 'pwsh.exe';
+
+  itPs('outputs model_display, version, effort from SAMPLE_STDIN', () => {
+    const script = emitPowershell(PARAMS, opts());
+    const out = stripAnsi(runScript(psCmd, ['-NoProfile', '-NonInteractive', '-File'], script));
+    expect(out).toContain(SAMPLE_STDIN.model.display_name);
+    expect(out).toContain(SAMPLE_STDIN.version);
+    expect(out).toContain(SAMPLE_STDIN.effort.level);
+  });
+
+  itPs('outputs ctx_used_pct percentage', () => {
+    const script = emitPowershell(['ctx_used_pct'], opts());
+    const out = stripAnsi(runScript(psCmd, ['-NoProfile', '-NonInteractive', '-File'], script));
+    expect(out).toContain(`${SAMPLE_STDIN.context_window.used_percentage}%`);
+  });
+
+  itPs('outputs session_id truncated to 8 chars', () => {
+    const script = emitPowershell(['session_id'], opts());
+    const out = stripAnsi(runScript(psCmd, ['-NoProfile', '-NonInteractive', '-File'], script));
+    expect(out).toContain(SAMPLE_STDIN.session_id.slice(0, 8));
   });
 });

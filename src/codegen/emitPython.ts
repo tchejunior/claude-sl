@@ -43,6 +43,7 @@ export function emitPython(selected: ParamId[], opts: ResolvedOptions): string {
 
   return `#!/usr/bin/env python3
 import json, sys
+sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 
 ${helperBlock}
 
