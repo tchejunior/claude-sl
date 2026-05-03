@@ -158,6 +158,7 @@ At https://github.com/tchejunior/claude-sl/settings/secrets/actions, add:
 
 Push any commit to `main`. Verify:
 
+Change to test commit to main
 Change to test push to main
 
 ```bash
