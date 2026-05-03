@@ -2,7 +2,7 @@
 
 > A no-install web tool that lets you build a custom **Claude Code status line** by ticking boxes — and walks out with a paste-ready `settings.json` plus a runnable script in the language and OS of your choice.
 
-**Live at:** https://claudesl.tchejunior.dev *(coming soon — see [Roadmap](#roadmap))*
+**Live at:** https://claudesl.tchejunior.dev
 
 ---
 
@@ -78,16 +78,14 @@ Line packing is hybrid: the generator decides line breaks at *gen-time* using wi
 
 ## Roadmap
 
-This repo is being built out in phases. Current status:
-
 - [x] Phase 1 — Project scaffolding
-- [ ] Phase 2 — Data layer (types, sample, params catalog)
-- [ ] Phase 3 — Codegen core (line packing, ANSI→HTML, helpers)
-- [ ] Phase 4 — Per-language emitters (JS / Python / Bash / PowerShell)
-- [ ] Phase 5 — UI (controls, output panel, live preview)
-- [ ] Phase 6 — Upstream-schema sync (daily PR bot)
-- [ ] Phase 7 — CI/CD + VPS deploy
-- [ ] Phase 8 — Integration tests for emitted scripts
+- [x] Phase 2 — Data layer (types, sample, params catalog)
+- [x] Phase 3 — Codegen core (line packing, ANSI→HTML, helpers)
+- [x] Phase 4 — Per-language emitters (JS / Python / Bash / PowerShell)
+- [x] Phase 5 — UI (controls, output panel, live preview)
+- [x] Phase 6 — Upstream-schema sync (daily PR bot)
+- [x] Phase 7 — CI/CD + VPS deploy
+- [ ] Phase 8 — Integration tests for emitted scripts (Bash + PowerShell coverage)
 
 Design spec: [`docs/superpowers/specs/2026-04-30-claude-sl-design.md`](docs/superpowers/specs/2026-04-30-claude-sl-design.md)
 Implementation plan: [`docs/superpowers/plans/2026-05-01-claude-sl.md`](docs/superpowers/plans/2026-05-01-claude-sl.md)
@@ -124,7 +122,7 @@ If a Claude Code field appears in the upstream docs but isn't yet in claude-sl, 
 
 ## License
 
-MIT — see [LICENSE](LICENSE) once added.
+MIT
 
 ---
 
