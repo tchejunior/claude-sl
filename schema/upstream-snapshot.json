@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-02T11:35:16.125312+00:00",
+  "fetched_at": "2026-05-07T07:59:31.672252+00:00",
   "source_url": "https://code.claude.com/docs/en/statusline",
   "fields": [
     {
@@ -52,11 +52,11 @@
     },
     {
       "path": "context_window.total_input_tokens",
-      "description": "Cumulative token counts across the session"
+      "description": "Token counts currently in the context window, from the most recent API response. Input includes cache reads and writes. Before v2.1.132 these were cumulative session totals"
     },
     {
       "path": "context_window.total_output_tokens",
-      "description": "Cumulative token counts across the session"
+      "description": "Token counts currently in the context window, from the most recent API response. Input includes cache reads and writes. Before v2.1.132 these were cumulative session totals"
     },
     {
       "path": "context_window.context_window_size",
