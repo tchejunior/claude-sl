@@ -22,6 +22,7 @@ jobs:
       - if: steps.drift.outcome == 'failure'
         uses: peter-evans/create-pull-request@v6
         with:
+          token: ${{ secrets.GH_PAT }}
           branch: chore/upstream-schema-drift
           title: 'chore(schema): upstream snapshot drift detected'
           body: |
