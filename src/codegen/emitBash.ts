@@ -14,7 +14,7 @@ function bashWithEmoji(emoji: string, expr: string): string {
     const v = simpleVar[1];
     return `"\${${v}:+${emoji} \${${v}}}"`;
   }
-  const capture = (inner.startsWith('$(') || inner.startsWith('${')) ? `_EV=${inner}` : `_EV=$(${inner})`;
+  const capture = (inner.startsWith('$(') || inner.startsWith('${')) ? `_EV=${inner}` : `_EV="${inner}"`;
   return `"$(${capture}; printf '%s' "\${_EV:+${emoji} }\${_EV}")"`;
 }
 

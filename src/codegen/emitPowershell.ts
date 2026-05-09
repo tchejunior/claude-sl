@@ -39,7 +39,7 @@ export function emitPowershell(selected: ParamId[], opts: ResolvedOptions): stri
 
   return `$ErrorActionPreference = 'Continue'
 try {
-    $d = $input | Out-String | ConvertFrom-Json
+    $d = [System.Console]::In.ReadToEnd() | ConvertFrom-Json
 ${helperBlock}
 ${extracts}
 ${lines}
