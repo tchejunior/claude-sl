@@ -147,7 +147,7 @@ describe('PowerShell emitter integration', () => {
   const isUnix = process.platform !== 'win32';
   const pwshCheck = spawnSync(isUnix ? 'pwsh' : 'pwsh.exe', ['--version'], { encoding: 'utf-8' });
   const hasPwsh = pwshCheck.status === 0;
-  const itPs = hasPwsh ? it : it.skip;
+  const itPs = (hasPwsh && !isUnix) ? it : it.skip;
   const psCmd = isUnix ? 'pwsh' : 'pwsh.exe';
 
   itPs('outputs model_display, version, effort from SAMPLE_STDIN', () => {
