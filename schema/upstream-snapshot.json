@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-02T11:35:16.125312+00:00",
+  "fetched_at": "2026-05-23T07:52:25.557244+00:00",
   "source_url": "https://code.claude.com/docs/en/statusline",
   "fields": [
     {
@@ -31,6 +31,18 @@
       "description": "Git worktree name when the current directory is inside a linked worktree created with git worktree add. Absent in the main working tree. Populated for any git worktree, unlike worktree.* which applies only to --worktree sessions"
     },
     {
+      "path": "workspace.repo.host",
+      "description": "Repository identity parsed from the origin remote, for example \"github.com\", \"anthropics\", \"claude-code\". Absent outside a git repository or when no origin remote is configured"
+    },
+    {
+      "path": "workspace.repo.owner",
+      "description": "Repository identity parsed from the origin remote, for example \"github.com\", \"anthropics\", \"claude-code\". Absent outside a git repository or when no origin remote is configured"
+    },
+    {
+      "path": "workspace.repo.name",
+      "description": "Repository identity parsed from the origin remote, for example \"github.com\", \"anthropics\", \"claude-code\". Absent outside a git repository or when no origin remote is configured"
+    },
+    {
       "path": "cost.total_cost_usd",
       "description": "Estimated session cost in USD, computed client-side. May differ from your actual bill"
     },
@@ -52,11 +64,11 @@
     },
     {
       "path": "context_window.total_input_tokens",
-      "description": "Cumulative token counts across the session"
+      "description": "Token counts currently in the context window, from the most recent API response. Input includes cache reads and writes. Before v2.1.132 these were cumulative session totals"
     },
     {
       "path": "context_window.total_output_tokens",
-      "description": "Cumulative token counts across the session"
+      "description": "Token counts currently in the context window, from the most recent API response. Input includes cache reads and writes. Before v2.1.132 these were cumulative session totals"
     },
     {
       "path": "context_window.context_window_size",
@@ -129,6 +141,18 @@
     {
       "path": "agent.name",
       "description": "Agent name when running with the --agent flag or agent settings configured"
+    },
+    {
+      "path": "pr.number",
+      "description": "Open pull request for the current branch. Mirrors the PR badge in the bottom status bar. Absent until a PR is found, when not in a git repository, or once the PR merges or closes"
+    },
+    {
+      "path": "pr.url",
+      "description": "Open pull request for the current branch. Mirrors the PR badge in the bottom status bar. Absent until a PR is found, when not in a git repository, or once the PR merges or closes"
+    },
+    {
+      "path": "pr.review_state",
+      "description": "Review status of the open PR: approved, pending, changes_requested, or draft. May be independently absent even when pr is present"
     },
     {
       "path": "worktree.name",
