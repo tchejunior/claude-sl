@@ -34,7 +34,5 @@ jobs:
         run: |
           ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "
             ln -sfn /var/www/claudesl/releases/${{ github.sha }} /var/www/claudesl/current &&
-            sudo /usr/sbin/nginx -t &&
-            sudo /bin/systemctl reload nginx &&
             ls -1dt /var/www/claudesl/releases/*/ | tail -n +6 | xargs -r rm -rf
           "
