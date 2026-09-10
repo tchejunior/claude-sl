@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-23T07:52:25.557244+00:00",
+  "fetched_at": "2026-09-10T12:10:43.201549+00:00",
   "source_url": "https://code.claude.com/docs/en/statusline",
   "fields": [
     {
@@ -28,23 +28,23 @@
     },
     {
       "path": "workspace.git_worktree",
-      "description": "Git worktree name when the current directory is inside a linked worktree created with git worktree add. Absent in the main working tree. Populated for any git worktree, unlike worktree.* which applies only to --worktree sessions"
+      "description": "Git worktree name when the current directory is inside a linked worktree created with git worktree add. Absent in the main working tree. Populated for any git worktree, unlike worktree.*, which is present only while the session is in a worktree session"
     },
     {
       "path": "workspace.repo.host",
-      "description": "Repository identity parsed from the origin remote, for example \"github.com\", \"anthropics\", \"claude-code\". Absent outside a git repository or when no origin remote is configured"
+      "description": "Repository identity parsed from the origin remote, for example, \"github.com\", \"anthropics\", \"claude-code\". Absent outside a git repository or when no origin remote is configured. For a gitlab.com project nested in subgroups, owner is the full namespace path with slashes, such as \"group/subgroup\". Before v2.1.260, workspace.repo was absent for these projects"
     },
     {
       "path": "workspace.repo.owner",
-      "description": "Repository identity parsed from the origin remote, for example \"github.com\", \"anthropics\", \"claude-code\". Absent outside a git repository or when no origin remote is configured"
+      "description": "Repository identity parsed from the origin remote, for example, \"github.com\", \"anthropics\", \"claude-code\". Absent outside a git repository or when no origin remote is configured. For a gitlab.com project nested in subgroups, owner is the full namespace path with slashes, such as \"group/subgroup\". Before v2.1.260, workspace.repo was absent for these projects"
     },
     {
       "path": "workspace.repo.name",
-      "description": "Repository identity parsed from the origin remote, for example \"github.com\", \"anthropics\", \"claude-code\". Absent outside a git repository or when no origin remote is configured"
+      "description": "Repository identity parsed from the origin remote, for example, \"github.com\", \"anthropics\", \"claude-code\". Absent outside a git repository or when no origin remote is configured. For a gitlab.com project nested in subgroups, owner is the full namespace path with slashes, such as \"group/subgroup\". Before v2.1.260, workspace.repo was absent for these projects"
     },
     {
       "path": "cost.total_cost_usd",
-      "description": "Estimated session cost in USD, computed client-side. May differ from your actual bill"
+      "description": "Estimated session cost in USD, computed client-side at list price unless a modelPricing table is in effect. May differ from your actual bill. Resets to $0 when /clear starts a new session. Before v2.1.211, the total carried over after /clear"
     },
     {
       "path": "cost.total_duration_ms",
@@ -64,11 +64,11 @@
     },
     {
       "path": "context_window.total_input_tokens",
-      "description": "Token counts currently in the context window, from the most recent API response. Input includes cache reads and writes. Before v2.1.132 these were cumulative session totals"
+      "description": "Token counts currently in the context window, from the most recent API response. Input includes cache reads and writes"
     },
     {
       "path": "context_window.total_output_tokens",
-      "description": "Token counts currently in the context window, from the most recent API response. Input includes cache reads and writes. Before v2.1.132 these were cumulative session totals"
+      "description": "Token counts currently in the context window, from the most recent API response. Input includes cache reads and writes"
     },
     {
       "path": "context_window.context_window_size",
@@ -92,7 +92,7 @@
     },
     {
       "path": "effort.level",
-      "description": "Current reasoning effort (low, medium, high, xhigh, or max). Reflects the live session value, including mid-session /effort changes. Absent when the current model does not support the effort parameter"
+      "description": "Current reasoning effort (low, medium, high, xhigh, or max). Reflects the live session value, including mid-session /effort changes. Ultracode is not a distinct level and reports as xhigh. Absent when the current model does not support the effort parameter"
     },
     {
       "path": "thinking.enabled",
@@ -115,12 +115,20 @@
       "description": "Unix epoch seconds when the 5-hour or 7-day rate limit window resets"
     },
     {
+      "path": "rate_limits.spend_limit.used_percentage",
+      "description": "Behind a Claude apps gateway, the percentage used of the spend limit that applies to you, and the Unix epoch seconds when its period resets. The percentage runs from 0 to 100, or above 100 once you exceed the limit. Requires Claude Code v2.1.251 or later"
+    },
+    {
+      "path": "rate_limits.spend_limit.resets_at",
+      "description": "Behind a Claude apps gateway, the percentage used of the spend limit that applies to you, and the Unix epoch seconds when its period resets. The percentage runs from 0 to 100, or above 100 once you exceed the limit. Requires Claude Code v2.1.251 or later"
+    },
+    {
       "path": "session_id",
       "description": "Unique session identifier"
     },
     {
       "path": "session_name",
-      "description": "Custom session name set with the --name flag or /rename. Absent if no custom name has been set"
+      "description": "Session name. Uses the custom name set with the --name flag or /rename when one exists, otherwise the AI-generated session title. The default display name, such as my-app-3f, doesn\u2019t populate this field. Absent when the session has neither a custom name nor an AI-generated title"
     },
     {
       "path": "transcript_path",
@@ -144,19 +152,23 @@
     },
     {
       "path": "pr.number",
-      "description": "Open pull request for the current branch. Mirrors the PR badge in the bottom status bar. Absent until a PR is found, when not in a git repository, or once the PR merges or closes"
+      "description": "Open pull request for the current branch. Mirrors the PR badge in the footer. In a repository with a GitLab remote, Claude Code fills these fields from the branch\u2019s open merge request instead, so pr.number is the merge request number. Merge request data requires Claude Code v2.1.234 or later. Absent when not in a git repository, until a pull request or merge request is found, or once it merges or closes"
     },
     {
       "path": "pr.url",
-      "description": "Open pull request for the current branch. Mirrors the PR badge in the bottom status bar. Absent until a PR is found, when not in a git repository, or once the PR merges or closes"
+      "description": "Open pull request for the current branch. Mirrors the PR badge in the footer. In a repository with a GitLab remote, Claude Code fills these fields from the branch\u2019s open merge request instead, so pr.number is the merge request number. Merge request data requires Claude Code v2.1.234 or later. Absent when not in a git repository, until a pull request or merge request is found, or once it merges or closes"
     },
     {
       "path": "pr.review_state",
       "description": "Review status of the open PR: approved, pending, changes_requested, or draft. May be independently absent even when pr is present"
     },
     {
+      "path": "pr.kind",
+      "description": "mr when pr describes a GitLab merge request. Absent for GitHub pull requests, so scripts written before this field keep working. For a merge request, Claude Code sets review_state to approved when GitLab reports it mergeable, pending for any other open state, and draft for a draft. Requires Claude Code v2.1.234 or later"
+    },
+    {
       "path": "worktree.name",
-      "description": "Name of the active worktree. Present only during --worktree sessions"
+      "description": "Name of the active worktree. Present only while the session is in a worktree session"
     },
     {
       "path": "worktree.path",
